@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <stdexcept>
+#include <queue>
 using namespace std;
 
 template <typename T> string toStr(const T &value) {
@@ -112,9 +113,34 @@ public:
   void remove(const Comparable &x) { remove(x, root); }
 
   string BFT() const {
-    string st;
+    if (root == nullptr) { return "[]"; }
+
+    string st = "[";
+    queue<BinaryNode*> q;
+    q.push(root);
+
+    while (!q.empty()) {
+        int level = q.size();
+        st += "[";
+
+        for (int i = 0; i < level; ++i) {
+            BinaryNode* current = q.front();
+            q.pop();
+
+            st += toStr(current->element);
+            if (i < level - 1) { st += ","; }
+
+          if (current->left) { q.push(current->left); }
+          if (current->right) { q.push(current->right); }
+        }
+
+        st += "]";
+        if (!q.empty()) { st += ","; }
+    }
+
+    st += "]";
     return st;
-  }
+}
 
 private:
   struct BinaryNode {
@@ -164,6 +190,7 @@ private:
     else
       ; // Duplicate; do nothing
   }
+
 
   /**
    * Internal method to remove from a subtree.
@@ -277,6 +304,7 @@ private:
     else
       return new BinaryNode{t->element, clone(t->left), clone(t->right)};
   }
+
 };
 
 #endif
